@@ -16,16 +16,21 @@ Arvore ConstruirArvore(int, Arvore, Arvore);
 Arvore construirExemplo( );
 void mostrarArvore (Arvore);
 int obterAltura( Arvore ); // devolve a altura
+int obterAlturaSemRecursao( Arvore );
 int contarNos( Arvore ); // num de nós
 Arvore construirArvoreRam(int); // cosntruir arvore perfeitamente balanceada dado o numero de nos desejado
 int numAleatorio(int p, int u);
+No *buscar(Arvore, int);
+No *buscarRecursivo(Arvore, int);
 
 int main(){
     srand((unsigned int)time(NULL));
+    No *busca;
     Arvore a;
-    a = construirArvoreRam(3);
+    a = construirArvoreRam(7);
+    a = construirExemplo();
     mostrarArvore(a);
-    printf("\n\n altura: %d\n Nos: %d\n",obterAltura(a), contarNos(a));
+    printf("\n\n altura: %d\n Nos: %d\n",obterAlturaSemRecursao(a), contarNos(a));
     return 0;
 }
 
@@ -47,14 +52,14 @@ Arvore ConstruirArvore(int y, Arvore a1, Arvore a2){
 Arvore construirExemplo( ){
     Arvore a,b,c;
     a = ConstruirArvore(4, NULL, NULL);
-    c = ConstruirArvore(5,NULL,NULL);
-    a = ConstruirArvore(2, a, c);
+    c = ConstruirArvore(14,NULL,NULL);
+    a = ConstruirArvore(10, a, c);
 
-    c = ConstruirArvore(7, NULL,NULL);
-    b = ConstruirArvore(6, NULL, NULL);
-    b = ConstruirArvore(3,b, c);
+    c = ConstruirArvore(44, NULL,NULL);
+    b = ConstruirArvore(34, NULL, NULL);
+    b = ConstruirArvore(40,b, c);
     //agora construindo a raíz
-    b = ConstruirArvore(1, a, b);
+    b = ConstruirArvore(30, a, b);
     return b;
 }
 
@@ -106,7 +111,7 @@ void mostrarArvore (Arvore ap){ //caminhamento eRd
     }
 }*/
 
-int obterAltura(Arvore ap){
+int obterAltura(Arvore ap){ //recursivo
     int altura, alturaEsq, alturaDir;
     if (ap == NULL)
         altura = -1;
@@ -119,6 +124,31 @@ int obterAltura(Arvore ap){
             altura = 1 + alturaEsq;
         else
             altura = 1 + alturaDir;
+    }
+    return altura;
+}
+
+int obterAlturaSemRecursao(Arvore ap){
+    int altura = -1; int alturaDir, alturaEsq;
+    No *p;
+    if (ap != NULL)
+    {
+        p = ap; alturaEsq = 0; alturaDir = 0;
+        while (p->esq != NULL)
+        {
+            alturaEsq++;
+            p = p->esq;
+        }
+        p = ap;
+        while (p->dir != NULL)
+        {
+            alturaDir++;
+            p = p->esq;
+        }
+        if (alturaEsq > alturaDir)
+            altura = alturaEsq;
+        else
+            altura = alturaDir;
     }
     return altura;
 }
@@ -150,6 +180,51 @@ Arvore construirArvoreRam(int n ){
     }
     return ap;
 }
+
+No *buscar(Arvore ap, int n){ //não recursivo
+    No *p, *y;
+    y = NULL;
+    if (ap != NULL)
+    {
+        Fila f;
+        p = ap;
+        criarFilaVazia(&f);
+        pushFila(&f,p);
+        do
+        {
+            p = acessarFila(&f);
+            if (p->elemento == n)
+            {
+                y = p;
+            }
+            else
+            {
+                popFila(&f);
+                if(p->esq != NULL) pushFila(&f, p->esq);
+                if(p->dir != NULL) pushFila(&f, p->dir);
+            }
+        } while (verificarFilaVazia(&f) == FALSE && y == NULL);
+    }
+    return y;
+}
+
+No *buscarRecursivo(Arvore ap, int n){
+    No *y = NULL;
+    if (ap != NULL)
+    {
+        if (ap->elemento == n)
+            y = ap;
+        else if (n < ap->elemento)
+        {
+            y = buscarRecursivo(ap->esq, n);
+        }
+        else
+            y = buscarRecursivo(ap->dir, n);
+    }
+    return y;
+}
+
+
 
 int numAleatorio(int p, int u){
     return p + rand() % (u - p + 1);
