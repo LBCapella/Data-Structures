@@ -22,6 +22,13 @@ Arvore construirArvoreRam(int); // cosntruir arvore perfeitamente balanceada dad
 int numAleatorio(int p, int u);
 No *buscar(Arvore, int);
 No *buscarRecursivo(Arvore, int);
+void mostrarPrimeiro (Arvore);
+void mostrarUltimo (Arvore);
+No *obterPrimeiro (Arvore);
+No *obterSeguinte(Arvore, int);
+No *obterAnterior(Arvore,int);
+int contarNoIN (Arvore);
+
 
 int main(){
     srand((unsigned int)time(NULL));
@@ -29,8 +36,13 @@ int main(){
     Arvore a;
     a = construirArvoreRam(7);
     a = construirExemplo();
+    //mostrarPrimeiro(a);
+    //mostrarUltimo(a);
     mostrarArvore(a);
     printf("\n\n altura: %d\n Nos: %d\n",obterAlturaSemRecursao(a), contarNos(a));
+    busca = obterSeguinte(a, 10);
+    //printf("\n\n O no seguinte a 40 eh: %d",busca->elemento );
+    printf("\n\n O n de nos inteiros sao: %d",contarNoIN(a));
     return 0;
 }
 
@@ -224,7 +236,119 @@ No *buscarRecursivo(Arvore ap, int n){
     return y;
 }
 
+void mostrarPrimeiro (Arvore ap){ //pelo caminhamento eRd
+    No *p;
+    if (ap != NULL)
+    {
+        p = ap;
+        while (p->esq != NULL)
+        {
+            p = p->esq;
+        }
+        printf("\n %d \n",p->elemento);
+    }
+}
 
+void mostrarUltimo (Arvore ap){
+    No *p;
+    if (ap != NULL)
+    {
+        p = ap;
+        while (p->dir != NULL)
+        {
+            p = p->dir;
+        }
+        printf("\n %d \n",p->elemento);
+    }
+}
+
+No *obterPrimeiro (Arvore ap){
+    No *p;
+    if (ap != NULL)
+    {
+        p = ap;
+        while (p->esq != NULL)
+        {
+            p = p->esq;
+        }
+    }
+    return p;
+}
+
+No *obterSeguinte(Arvore ap, int r){
+    No *p, *y;
+    y = NULL;
+    if (ap != NULL)
+    {
+        Fila f;
+        p = ap;
+        criarFilaVazia(&f);
+        pushFila(&f,p);
+        do
+        {
+            p = acessarFila(&f);
+            if (p->elemento == r)
+            {
+                y = p;
+            }
+            else
+            {
+                popFila(&f);
+                if(p->esq != NULL) pushFila(&f, p->esq);
+                if(p->dir != NULL) pushFila(&f, p->dir);
+            }
+        } while (verificarFilaVazia(&f) == FALSE && y == NULL);
+            y = y->dir;
+    }
+    return y;
+}
+
+No *obterAnterior(Arvore ap, int r){
+    No *p, *y;
+    y = NULL;
+    if (ap != NULL)
+    {
+        Fila f;
+        p = ap;
+        criarFilaVazia(&f);
+        pushFila(&f,p);
+        do
+        {
+            p = acessarFila(&f);
+            if (p->elemento == r)
+            {
+                y = p;
+            }
+            else
+            {
+                popFila(&f);
+                if(p->esq != NULL) pushFila(&f, p->esq);
+                if(p->dir != NULL) pushFila(&f, p->dir);
+            }
+        } while (verificarFilaVazia(&f) == FALSE && y == NULL);
+            y = y->esq;
+    }
+    return y;
+}
+
+int contarNoIN (Arvore ap){ // conta o numero de nos interiores (um ou mais filhos)
+    int cont = 0;
+    if (ap != NULL)
+    {
+        Fila f; criarFilaVazia(&f); pushFila(&f, ap);
+        while (verificarFilaVazia(&f) == FALSE)
+        {
+            No *p = acessarFila(&f);
+            popFila(&f);
+            if (p->esq != NULL || p->dir != NULL)
+                cont++;
+            
+            if (p->esq != NULL) pushFila(&f,p->esq);
+            if (p->dir != NULL) pushFila(&f,p->dir);
+        }
+    }
+    return cont;
+}
 
 int numAleatorio(int p, int u){
     return p + rand() % (u - p + 1);
