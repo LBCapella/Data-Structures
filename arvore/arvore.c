@@ -28,6 +28,7 @@ No *obterPrimeiro (Arvore);
 No *obterSeguinte(Arvore, int);
 No *obterAnterior(Arvore,int);
 int contarNoIN (Arvore);
+void arvoreFolhas(Arvore );
 
 
 int main(){
@@ -39,10 +40,11 @@ int main(){
     //mostrarPrimeiro(a);
     //mostrarUltimo(a);
     mostrarArvore(a);
-    printf("\n\n altura: %d\n Nos: %d\n",obterAlturaSemRecursao(a), contarNos(a));
+    printf("\n\n altura: %d\n Nos: %d\n",obterAltura(a), contarNos(a));
     busca = obterSeguinte(a, 10);
     //printf("\n\n O no seguinte a 40 eh: %d",busca->elemento );
     printf("\n\n O n de nos inteiros sao: %d",contarNoIN(a));
+    arvoreFolhas(a);
     return 0;
 }
 
@@ -62,9 +64,10 @@ Arvore ConstruirArvore(int y, Arvore a1, Arvore a2){
 }
 
 Arvore construirExemplo( ){
-    Arvore a,b,c;
+    Arvore a,b,c,d;
+    d = ConstruirArvore(2,NULL,NULL);
     a = ConstruirArvore(4, NULL, NULL);
-    c = ConstruirArvore(14,NULL,NULL);
+    c = ConstruirArvore(14,NULL,d);
     a = ConstruirArvore(10, a, c);
 
     c = ConstruirArvore(44, NULL,NULL);
@@ -124,11 +127,8 @@ void mostrarArvore (Arvore ap){ //caminhamento eRd
 }*/
 
 int obterAltura(Arvore ap){ //recursivo
-    int altura, alturaEsq, alturaDir;
-    if (ap == NULL)
-        altura = -1;
-
-    else
+    int altura = -1 , alturaEsq, alturaDir;
+    if(ap != NULL)
     {
         alturaEsq = obterAltura(ap->esq);
         alturaDir = obterAltura(ap->dir);
@@ -138,6 +138,16 @@ int obterAltura(Arvore ap){ //recursivo
             altura = 1 + alturaDir;
     }
     return altura;
+}
+
+void arvoreFolhas(Arvore ap){ // caminhamento eRd
+    if (ap != NULL)
+    {
+        arvoreFolhas(ap->esq);
+        if (ap->esq == NULL && ap->dir == NULL)
+            printf("\n %d", ap->elemento);
+        arvoreFolhas(ap->dir);
+    }
 }
 
 int obterAlturaSemRecursao(Arvore ap){
