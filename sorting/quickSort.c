@@ -14,15 +14,19 @@ typedef struct {
 list criarListaVazia();
 list criarListaAleatoria(int, int, int); // tamanho max, de x a y
 void mostrarLista(list);
-void quicksort(list *, int, int);
-
+int separarLista(list *, int, int );
+void quicksort (list *, int, int);
+void mergesort (list *, int, int);
+void intercalar(list *, int, int, int);
 
 int main() {
     list A;
     A = criarListaVazia();
     A = criarListaAleatoria(max - 1, 1, 999);
     //mostrarLista(A); // Exibe a lista gerada
-    quicksort(&A, 1, A.tamanho); // indice final e inicial
+    mostrarLista(A);
+    //quicksort(&A, 1, A.tamanho); // indice final e inicial
+    mergesort(&A,1,A.tamanho);
     mostrarLista(A); // Exibe a lista ordenada
     return 0;
 }
@@ -108,4 +112,51 @@ int separarLista(list *ap, int p, int u ){
     ap->tabela[p] = ap->tabela[j];
     ap->tabela[j] = aux;
     return j;
+}
+
+void mergesort (list *ap, int p, int u){
+    int q;
+    if (p < u)
+    {
+        q = (p+u)/2;
+        mergesort(ap, p, q);
+        mergesort(ap, q+1, u);
+        intercalar(ap,p,q,u);
+    }
+    
+}
+
+void intercalar(list *ap, int p, int q, int u){
+    list aux;
+    for (int i = p; i <= u; i++)
+        aux.tabela[i] = ap->tabela[i];
+    int j = p, k = q+1, e = p;
+    do
+    {
+        if (aux.tabela[j] <= aux.tabela[k]){
+            ap->tabela[e] = aux.tabela[j];
+            j++;
+        }
+        else{
+            ap->tabela[e] = aux.tabela[k];
+            k++;
+        }
+        e++;
+    } while (j <= q && k <= u);
+
+    if (j > q)
+    {
+        for (int i = k; i <= u; i++)
+        {
+            ap->tabela[e] = aux.tabela[i];
+            e++;
+        }
+    }
+    else{
+        for (int i = j; i <= q; i++)
+        {
+            ap->tabela[e] = aux.tabela[i];
+            e++;
+        }
+    }
 }
